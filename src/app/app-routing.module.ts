@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core'
 import { Routes, RouterModule } from '@angular/router';
 
+import { AuthGuard } from './auth-guard.service';
 import { HomeComponent } from './home/home.component';
 import { UsersComponent } from './users/users.component';
 import { ServersComponent } from './servers/servers.component';
@@ -15,10 +16,16 @@ const appRoutes: Routes = [
   { path: 'users', component: UsersComponent, children: [
     { path: ':id/:name', component: UserComponent },
   ] },
-  { path: 'servers', component: ServersComponent, children: [
-    { path: ':id', component: ServerComponent },
-    { path: ':id/edit', component: EditServerComponent },
-  ] },
+  {
+    path: 'servers',
+    // canActivate: [AuthGuard],  // Protect the route and all its childs.
+    canActivateChild: [AuthGuard],  // Protect only the child routes.
+    component: ServersComponent,
+    children: [
+      { path: ':id', component: ServerComponent },
+      { path: ':id/edit', component: EditServerComponent },
+    ]
+  },
   { path: 'not-found', component: PageNotFoundComponent },
   { path: '**', redirectTo: '/not-found' }
 ];
